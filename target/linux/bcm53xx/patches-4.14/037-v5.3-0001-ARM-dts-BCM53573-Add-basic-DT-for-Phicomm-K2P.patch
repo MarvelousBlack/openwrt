@@ -1,0 +1,128 @@
+From 5c767f4c1e10bd89f95a77c3cfed0e1b2bcf35ae Mon Sep 17 00:00:00 2001
+From: Megumi_fox <i@megumifox.com>
+Date: Mon, 16 Dec 2019 16:53:10 +0800
+Subject: [PATCH] dts: BCM47189: Add basic DT for Phicomm-k2p-bcm
+
+---
+ arch/arm/boot/dts/Makefile                 |  1 +
+ arch/arm/boot/dts/bcm47189-phicomm-k2p.dts | 96 ++++++++++++++++++++++
+ 2 files changed, 97 insertions(+)
+ create mode 100644 arch/arm/boot/dts/bcm47189-phicomm-k2p.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b21b3a64641a..e7756a47b044 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -126,6 +126,7 @@ dtb-$(CONFIG_ARCH_BCM_53573) += \
+ 	bcm47189-luxul-xap-1440.dtb \
+ 	bcm47189-luxul-xap-810.dtb \
+ 	bcm47189-tenda-ac9.dtb \
++	bcm47189-phicomm-k2p.dtb \
+ 	bcm947189acdbmr.dtb
+ dtb-$(CONFIG_ARCH_BCM_63XX) += \
+ 	bcm963138dvt.dtb
+diff --git a/arch/arm/boot/dts/bcm47189-phicomm-k2p.dts b/arch/arm/boot/dts/bcm47189-phicomm-k2p.dts
+new file mode 100644
+index 000000000000..46b005d3b849
+--- /dev/null
++++ b/arch/arm/boot/dts/bcm47189-phicomm-k2p.dts
+@@ -0,0 +1,96 @@
++/dts-v1/;
++
++#include "bcm53573.dtsi"
++
++/ {
++	compatible = "phicomm,k2p", "brcm,bcm47189", "brcm,bcm53573";
++	model = "PHICOMM K2P";
++
++	chosen {
++		bootargs = "console=ttyS0,115200 earlycon";
++	};
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x00000000 0x08000000>;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		wps {
++			label = "bcm53xx:blue:wps";
++			gpios = <&chipcommon 10 GPIO_ACTIVE_HIGH>;
++		};
++
++		5ghz {
++			label = "bcm53xx:blue:5ghz";
++			gpios = <&chipcommon 11 GPIO_ACTIVE_HIGH>;
++		};
++
++		system {
++			label = "bcm53xx:blue:system";
++			gpios = <&chipcommon 15 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "timer";
++		};
++	};
++
++	pcie0_leds {
++		compatible = "gpio-leds";
++
++		2ghz {
++			label = "bcm53xx:blue:2ghz";
++			gpios = <&pcie0_chipcommon 3 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		rfkill {
++			label = "WiFi";
++			linux,code = <KEY_RFKILL>;
++			gpios = <&chipcommon 3 GPIO_ACTIVE_LOW>;
++		};
++
++		restart {
++			label = "Reset";
++			linux,code = <KEY_RESTART>;
++			gpios = <&chipcommon 7 GPIO_ACTIVE_LOW>;
++		};
++
++		wps {
++			label = "WPS";
++			linux,code = <KEY_WPS_BUTTON>;
++			gpios = <&chipcommon 9 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&pcie0 {
++	ranges = <0x00000000 0 0 0 0 0x00100000>;
++	#address-cells = <3>;
++	#size-cells = <2>;
++
++	bridge@0,0,0 {
++		reg = <0x0000 0 0 0 0>;
++		ranges = <0x00000000 0 0 0 0 0 0 0x00100000>;
++		#address-cells = <3>;
++		#size-cells = <2>;
++
++		wifi@0,1,0 {
++			reg = <0x0000 0 0 0 0>;
++			ranges = <0x00000000 0 0 0 0x00100000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			pcie0_chipcommon: chipcommon@0 {
++				reg = <0 0x1000>;
++
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++		};
++	};
++};
++/delete-node/ &usb2;
+-- 
+2.24.1
+

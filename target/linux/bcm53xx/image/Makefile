@@ -337,6 +337,15 @@ define Device/phicomm-k3
 endef
 TARGET_DEVICES += phicomm-k3
 
+define Device/phicomm-k2p
+  DEVICE_VENDOR := PHICOMM
+  DEVICE_MODEL := K2P
+  DEVICE_PACKAGES := $(B43)
+  IMAGES := trx
+  IMAGE/trx := append-rootfs | trx-serial
+endef
+TARGET_DEVICES += phicomm-k2p
+
 define Device/tenda-ac9
   DEVICE_VENDOR := Tenda
   DEVICE_MODEL := AC9

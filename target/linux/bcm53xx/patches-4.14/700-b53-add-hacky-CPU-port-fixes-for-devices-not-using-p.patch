@@ -21,7 +21,7 @@ Signed-off-by: Rafał Miłecki <zajec5@gmail.com>
  
  #include "b53_regs.h"
  #include "b53_priv.h"
-@@ -1579,6 +1580,28 @@ static int b53_switch_init(struct b53_de
+@@ -1579,6 +1580,30 @@ static int b53_switch_init(struct b53_de
  			return ret;
  	}
  
@@ -37,6 +37,8 @@ Signed-off-by: Rafał Miłecki <zajec5@gmail.com>
 +
 +	/* Enable extra ports */
 +	if (of_machine_is_compatible("tenda,ac9"))
++		dev->enabled_ports |= BIT(5);
++	else if (of_machine_is_compatible("phicomm,k2p"))
 +		dev->enabled_ports |= BIT(5);
 +
 +	/*
